@@ -1,0 +1,33 @@
+{
+  "name": "cordova-plugin-google-places",
+  "version": "0.0.1",
+  "description": "Cordova plugin for Google Places SDK",
+  "cordova": {
+    "id": "cordova-plugin-google-places",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chemerisuk/cordova-plugin-google-places.git"
+  },
+  "author": "Maksim Chemerisuk <chemerisuk@gmail.com> (https://github.com/chemerisuk)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chemerisuk/cordova-plugin-google-places/issues"
+  },
+  "homepage": "https://github.com/chemerisuk/cordova-plugin-google-places#readme",
+  "keywords": [
+    "cordova",
+    "google places",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "scripts": {
+    "version": "replace -s 'version=\"(.+)(?=\">)' 'version=\"'$npm_package_version plugin.xml && git add plugin.xml",
+    "postversion": "git push && git push --tags"
+  }
+}

@@ -1,0 +1,58 @@
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+xmlns:android="http://schemas.android.com/apk/res/android"
+           id="cordova-plugin-google-places"
+      version="0.0.1">
+
+    <name>cordova-plugin-google-places</name>
+    <description>Cordova plugin for Google Places SDK</description>
+    <license>MIT</license>
+    <keywords>cordova</keywords>
+    <repo>https://github.com/chemerisuk/cordova-plugin-google-places</repo>
+    <issue>https://github.com/chemerisuk/cordova-plugin-google-places/issues</issue>
+
+    <js-module src="www/GooglePlaces.js" name="GooglePlaces">
+        <merges target="cordova.plugins.google.places" />
+    </js-module>
+
+    <engines>
+        <engine name="cordova" version=">=7.1.0"/>
+        <engine name="cordova-android" version=">=7.0.0"/>
+        <engine name="cordova-ios" version=">=4.3.0"/>
+    </engines>
+
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="GooglePlaces">
+                <param name="ios-package" value="PlacesPlugin" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/PlacesPlugin.h" />
+        <source-file src="src/ios/PlacesPlugin.m" />
+
+        <framework src="GooglePlaces" type="podspec" spec="~> 2.7"/>
+    </platform>
+
+    <platform name="android">
+        <preference name="GOOGLE_PLACES_VERSION" default="15.0.+"/>
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="GooglePlaces">
+                <param name="android-package" value="by.chemerisuk.cordova.google.PlacesPlugin" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+
+        <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
+        <dependency id="cordova-support-google-services" version="~1.2.0"/>
+
+        <framework src="com.google.android.gms:play-services-places:$GOOGLE_PLACES_VERSION" />
+
+        <source-file src="src/android/PlacesPlugin.java"
+            target-dir="src/by/chemerisuk/cordova/google/" />
+    </platform>
+
+</plugin>
