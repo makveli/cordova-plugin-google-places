@@ -1,4 +1,4 @@
-import by.chemerisuk.cordova.google;
+package by.chemerisuk.cordova.google;
 
 import by.chemerisuk.cordova.support.CordovaMethod;
 import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;

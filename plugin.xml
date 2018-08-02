@@ -10,7 +10,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <repo>https://github.com/chemerisuk/cordova-plugin-google-places</repo>
     <issue>https://github.com/chemerisuk/cordova-plugin-google-places/issues</issue>
 
-    <js-module src="www/GooglePlaces.js" name="GooglePlaces">
+    <js-module src="www/PlacesPlugin.js" name="GooglePlaces">
         <merges target="cordova.plugins.google.places" />
     </js-module>
 
@@ -21,7 +21,10 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </engines>
 
     <platform name="ios">
+        <preference name="IOS_MAPS_KEY" />
+
         <config-file target="config.xml" parent="/*">
+            <preference name="GoogleServicesPlacesKey" value="$IOS_MAPS_KEY" />
             <feature name="GooglePlaces">
                 <param name="ios-package" value="PlacesPlugin" />
             </feature>
@@ -34,6 +37,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
+        <preference name="ANDROID_MAPS_KEY" />
         <preference name="GOOGLE_PLACES_VERSION" default="15.0.+"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
@@ -46,8 +50,11 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <uses-permission android:name="android.permission.INTERNET" />
         </config-file>
 
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <meta-data android:name="com.google.android.geo.API_KEY" android:value="$ANDROID_MAPS_KEY" />
+        </config-file>
+
         <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
-        <dependency id="cordova-support-google-services" version="~1.2.0"/>
 
         <framework src="com.google.android.gms:play-services-places:$GOOGLE_PLACES_VERSION" />
 
