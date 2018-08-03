@@ -83,7 +83,7 @@
     }
 
     return @{
-        @"id": place.placeID,
+        @"placeId": place.placeID,
         @"name": place.name ? place.name : @"",
         @"formattedAddress": place.formattedAddress,
 //        @"attributions": place.attributions,
@@ -94,10 +94,10 @@
 //        @"openNowStatus": place.openNowStatus,
         @"phoneNumber": place.phoneNumber ? place.phoneNumber : @"",
         @"addressComponents": addressComponents,
-        @"coordinate": @{
-            @"latitude": [NSNumber numberWithDouble:place.coordinate.latitude],
-            @"longitude": [NSNumber numberWithDouble:place.coordinate.longitude]
-        }
+        @"latlng": @[
+            [NSNumber numberWithDouble:place.coordinate.latitude],
+            [NSNumber numberWithDouble:place.coordinate.longitude]
+        ]
     };
 }
 
