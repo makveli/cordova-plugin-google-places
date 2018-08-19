@@ -27,10 +27,12 @@
     }
 
     GMSCoordinateBounds* bounds = nil;
-//    if (options[@"bounds"]) {
-//        CLLocationCoordinate2D sw;
-//        CLLocationCoordinate2D ne;
-//    }
+    NSDictionary* boundsData = options[@"bounds"];
+    if (![boundsData isEqual:[NSNull null]]) {
+        CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake([boundsData[@"north"] doubleValue], [boundsData[@"east"] doubleValue]);
+        CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake([boundsData[@"south"] doubleValue], [boundsData[@"west"] doubleValue]);
+        bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:northEast coordinate:southWest];
+    }
 
     [_placesClient autocompleteQuery:query bounds:bounds filter:filter callback:^(NSArray *results, NSError *error) {
         CDVPluginResult *pluginResult;

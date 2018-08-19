@@ -19,6 +19,8 @@ import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBufferResponse;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -60,7 +62,16 @@ public class PlacesPlugin extends ReflectiveCordovaPlugin {
             filterBuilder.setTypeFilter(settings.getInt("types"));
         }
 
-        this.geoDataClient.getAutocompletePredictions(query, null, filterBuilder.build())
+        LatLngBounds bounds = null;
+        JSONObject boundsData = settings.getJSONObject("bounds");
+        if (boundsData != null) {
+            bounds = new LatLngBounds(
+                new LatLng(boundsData.getDouble("south"), boundsData.getDouble("west")),
+                new LatLng(boundsData.getDouble("north"), boundsData.getDouble("east"))
+            );
+        }
+
+        this.geoDataClient.getAutocompletePredictions(query, bounds, filterBuilder.build())
             .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<AutocompletePredictionBufferResponse>() {
                 @Override
                 public void onComplete(Task<AutocompletePredictionBufferResponse> task) {
