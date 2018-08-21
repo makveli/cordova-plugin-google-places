@@ -3,7 +3,6 @@ package by.chemerisuk.cordova.google;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,14 +75,16 @@ public class PlacesPlugin extends ReflectiveCordovaPlugin {
                 @Override
                 public void onComplete(Task<AutocompletePredictionBufferResponse> task) {
                     if (task.isSuccessful()) {
-                        JSONArray result = new JSONArray();
                         AutocompletePredictionBufferResponse predictions = task.getResult();
-                        Iterator<AutocompletePrediction> it = predictions.iterator();
-                        while (it.hasNext()) {
-                            result.put(predictionToJSON(it.next()));
+                        try {
+                            JSONArray result = new JSONArray();
+                            for (AutocompletePrediction prediction : predictions) {
+                                result.put(predictionToJSON(prediction));
+                            }
+                            callbackContext.success(result);
+                        } finally {
+                            predictions.release();
                         }
-                        callbackContext.success(result);
-                        predictions.release();
                     } else {
                         callbackContext.error(task.getException().getMessage());
                     }
@@ -99,8 +100,15 @@ public class PlacesPlugin extends ReflectiveCordovaPlugin {
                 public void onComplete(Task<PlaceBufferResponse> task) {
                     if (task.isSuccessful()) {
                         PlaceBufferResponse places = task.getResult();
-                        callbackContext.success(placeToJSON(places.get(0)));
-                        places.release();
+                        try {
+                            if (places.getCount() == 0) {
+                                callbackContext.success((String)null);
+                            } else {
+                                callbackContext.success(placeToJSON(places.get(0)));
+                            }
+                        } finally {
+                            places.release();
+                        }
                     } else {
                         callbackContext.error(task.getException().getMessage());
                     }
