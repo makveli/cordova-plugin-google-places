@@ -21,7 +21,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </engines>
 
     <platform name="ios">
-        <preference name="IOS_MAPS_KEY" />
+        <preference name="IOS_MAPS_KEY" default=" "/>
 
         <config-file target="config.xml" parent="/*">
             <preference name="GoogleServicesPlacesKey" value="$IOS_MAPS_KEY" />

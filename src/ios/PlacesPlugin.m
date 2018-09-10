@@ -8,7 +8,12 @@
 }
 
 - (void)pluginInitialize {
-    NSString* apiKey = [self.commandDelegate.settings objectForKey:[@"GoogleServicesPlacesKey" lowercaseString]];
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"GoogleService-Info" ofType:@"plist"];
+    NSDictionary *googleServicesInfo = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    NSString* apiKey = googleServicesInfo[@"API_KEY"];
+    if (!apiKey) {
+        apiKey = [self.commandDelegate.settings objectForKey:[@"GoogleServicesPlacesKey" lowercaseString]];
+    }
 
     [GMSPlacesClient provideAPIKey:apiKey];
 
