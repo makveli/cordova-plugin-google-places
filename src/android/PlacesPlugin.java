@@ -9,7 +9,6 @@ import java.util.Map;
 
 import by.chemerisuk.cordova.support.CordovaMethod;
 import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
-import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin.ExecutionThread;
 
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
@@ -23,7 +22,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
 import org.json.JSONArray;
@@ -37,7 +35,7 @@ public class PlacesPlugin extends ReflectiveCordovaPlugin {
 
     @Override
     protected void pluginInitialize() {
-        this.geoDataClient = Places.getGeoDataClient(cordova.getActivity(), null);
+        this.geoDataClient = Places.getGeoDataClient(cordova.getActivity());
 
         this.types = new HashMap<Integer, String>();
         for (Field f : Place.class.getDeclaredFields()) {
