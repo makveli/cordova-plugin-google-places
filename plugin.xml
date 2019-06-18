@@ -38,7 +38,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <platform name="android">
         <preference name="ANDROID_MAPS_KEY" />
-        <preference name="GOOGLE_PLACES_VERSION" default="15.0.+"/>
+        <preference name="GOOGLE_PLACES_VERSION" default="17.0.+"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="GooglePlaces">
