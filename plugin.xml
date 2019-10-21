@@ -54,8 +54,10 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         </config-file>
 
         <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
-
+        <!--
         <framework src="com.google.android.libraries.places:places-compat:2.0.0" />
+        -->
+        <framework src="com.google.android.gms:play-services-places:12.+" />
 
         <source-file src="src/android/PlacesPlugin.java"
             target-dir="src/by/chemerisuk/cordova/google/" />
