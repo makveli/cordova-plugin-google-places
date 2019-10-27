@@ -23,8 +23,11 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <platform name="ios">
         <preference name="IOS_MAPS_KEY" default=" "/>
 
+        <config-file target="*-Info.plist" parent="GoogleServicesPlacesKey">
+            <string>$IOS_MAPS_KEY</string>
+        </config-file>
+
         <config-file target="config.xml" parent="/*">
-            <preference name="GoogleServicesPlacesKey" value="$IOS_MAPS_KEY" />
             <feature name="GooglePlaces">
                 <param name="ios-package" value="PlacesPlugin" />
             </feature>
@@ -33,7 +36,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <header-file src="src/ios/PlacesPlugin.h" />
         <source-file src="src/ios/PlacesPlugin.m" />
 
-        <framework src="GooglePlaces" type="podspec" spec="~> 2.7"/>
+        <framework src="GooglePlaces" type="podspec" spec="~> 3.0"/>
     </platform>
 
     <platform name="android">
