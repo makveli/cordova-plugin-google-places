@@ -2,62 +2,56 @@
 
 @import GooglePlaces;
 
-
 @implementation PlacesPlugin {
     GMSPlacesClient *_placesClient;
+    GMSAutocompleteSessionToken *token;
 }
 
 - (void)pluginInitialize {
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"GoogleService-Info" ofType:@"plist"];
-    NSDictionary *googleServicesInfo = [NSDictionary dictionaryWithContentsOfFile:filePath];
-    NSString* apiKey = googleServicesInfo[@"API_KEY"];
-    if (!apiKey) {
-        apiKey = [self.commandDelegate.settings objectForKey:[@"GoogleServicesPlacesKey" lowercaseString]];
-    }
-
+    NSString *apiKey = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"GoogleServicesPlacesKey"];
     [GMSPlacesClient provideAPIKey:apiKey];
-
     _placesClient = [GMSPlacesClient sharedClient];
 }
 
 - (void)getPredictions:(CDVInvokedUrlCommand *)command {
-    NSString* query = [command.arguments objectAtIndex:0];
-    NSDictionary* options = [command.arguments objectAtIndex:1];
-    GMSAutocompleteFilter* filter = [[GMSAutocompleteFilter alloc] init];
-    if (options[@"country"]) {
-        filter.country = options[@"country"];
+    NSString *query = [command.arguments objectAtIndex:0];
+    NSDictionary *options = [command.arguments objectAtIndex:1];
+    
+    if (options[@"newSession"]) {
+      token = [[GMSAutocompleteSessionToken alloc] init];
     }
+    GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
     if (options[@"types"]) {
-        filter.type = [options[@"types"] intValue];
+      filter.type = [options[@"types"] intValue];
     }
-
-    GMSCoordinateBounds* bounds = nil;
-    NSDictionary* boundsData = options[@"bounds"];
-    if (![boundsData isEqual:[NSNull null]]) {
-        CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake([boundsData[@"north"] doubleValue], [boundsData[@"east"] doubleValue]);
-        CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake([boundsData[@"south"] doubleValue], [boundsData[@"west"] doubleValue]);
-        bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:northEast coordinate:southWest];
+    if (options[@"country"]) {
+      filter.country = options[@"country"];
     }
-
-    [_placesClient autocompleteQuery:query bounds:bounds filter:filter callback:^(NSArray *results, NSError *error) {
-        CDVPluginResult *pluginResult;
-        if (error != nil) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
-        } else {
-            NSMutableArray *dataArray = [[NSMutableArray alloc] init];
-            for (GMSAutocompletePrediction* result in results) {
-                [dataArray addObject:[self predictionToDictionary:result]];
-            }
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:dataArray];
+	
+    [_placesClient findAutocompletePredictionsFromQuery:query bounds:nil boundsMode:kGMSAutocompleteBoundsModeBias
+    filter:filter sessionToken:token callback:^(NSArray<GMSAutocompletePrediction *> * _Nullable results, NSError * _Nullable error) {
+      CDVPluginResult *pluginResult;
+      if (error != nil) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
+      } else if (results != nil) {
+        NSMutableArray *dataArray = [[NSMutableArray alloc] init];
+        for (GMSAutocompletePrediction* result in results) {
+            [dataArray addObject:[self predictionToDictionary:result]];
         }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:dataArray];
+      } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+      }
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
 - (void)getById:(CDVInvokedUrlCommand *)command {
-    NSString* placeId = [command.arguments objectAtIndex:0];
+    NSString *placeId = [command.arguments objectAtIndex:0];
 
-    [_placesClient lookUpPlaceID:placeId callback:^(GMSPlace *place, NSError *error) {
+    GMSPlaceField *fields = (GMSPlaceFieldName | GMSPlaceFieldPlaceID);
+
+    [_placesClient fetchPlaceFromPlaceID:placeId placeFields:fields sessionToken:token callback:^(GMSPlace *place, NSError *error) {
         CDVPluginResult *pluginResult;
         if (error != nil) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
@@ -81,26 +75,13 @@
 }
 
 - (NSDictionary*)placeToDictionary:(GMSPlace *)place {
-    NSMutableArray *addressComponents = [[NSMutableArray alloc] init];
-    for (GMSAddressComponent* addressComponent in place.addressComponents) {
-        [addressComponents addObject:@{
-            @"type": addressComponent.type,
-            @"name": addressComponent.name
-        }];
-    }
-
     return @{
         @"placeId": place.placeID,
         @"name": place.name ? place.name : @"",
-        @"formattedAddress": place.formattedAddress,
-//        @"attributions": place.attributions,
-        @"types": place.types,
-        @"rating": [NSNumber numberWithDouble:place.rating],
-//        @"priceLevel": place.priceLevel,
+        @"formattedAddress": place.formattedAddress ? place.formattedAddress : @"",
+        @"types": place.types ? place.types : @"",
         @"website": place.website ? place.website.absoluteString : @"",
-//        @"openNowStatus": place.openNowStatus,
         @"phoneNumber": place.phoneNumber ? place.phoneNumber : @"",
-        @"addressComponents": addressComponents,
         @"latlng": @[
             [NSNumber numberWithDouble:place.coordinate.latitude],
             [NSNumber numberWithDouble:place.coordinate.longitude]
