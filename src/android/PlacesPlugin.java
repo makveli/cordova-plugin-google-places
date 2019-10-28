@@ -59,8 +59,8 @@ public class PlacesPlugin extends ReflectiveCordovaPlugin {
             filterBuilder.setTypeFilter(settings.getInt("types"));
         }
 
-        LatLngBounds bounds = null;
-        JSONObject boundsData = settings.getJSONObject("bounds");
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 180));
+        JSONObject boundsData = settings.has("bounds") ? settings.getJSONObject("bounds") : null;
         if (boundsData != null) {
             bounds = new LatLngBounds(
                 new LatLng(boundsData.getDouble("south"), boundsData.getDouble("west")),
