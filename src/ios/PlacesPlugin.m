@@ -49,9 +49,9 @@
 - (void)getById:(CDVInvokedUrlCommand *)command {
     NSString *placeId = [command.arguments objectAtIndex:0];
 
-    GMSPlaceField *fields = (GMSPlaceFieldName | GMSPlaceFieldPlaceID);
+    GMSPlaceField *fields = (GMSPlaceFieldName | GMSPlaceFieldPlaceID | GMSPlaceFieldCoordinate | GMSPlaceFieldFormattedAddress);
 
-    [_placesClient fetchPlaceFromPlaceID:placeId placeFields:fields sessionToken:token callback:^(GMSPlace *place, NSError *error) {
+    [_placesClient fetchPlaceFromPlaceID:placeId placeFields:fields sessionToken:nil callback:^(GMSPlace *place, NSError *error) {
         CDVPluginResult *pluginResult;
         if (error != nil) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
@@ -79,9 +79,9 @@
         @"placeId": place.placeID,
         @"name": place.name ? place.name : @"",
         @"formattedAddress": place.formattedAddress ? place.formattedAddress : @"",
-        @"types": place.types ? place.types : @"",
-        @"website": place.website ? place.website.absoluteString : @"",
-        @"phoneNumber": place.phoneNumber ? place.phoneNumber : @"",
+//        @"types": place.types ? place.types : @"",
+//        @"website": place.website ? place.website.absoluteString : @"",
+//        @"phoneNumber": place.phoneNumber ? place.phoneNumber : @"",
         @"latlng": @[
             [NSNumber numberWithDouble:place.coordinate.latitude],
             [NSNumber numberWithDouble:place.coordinate.longitude]
