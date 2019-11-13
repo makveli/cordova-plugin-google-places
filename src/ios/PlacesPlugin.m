@@ -3,14 +3,15 @@
 @import GooglePlaces;
 
 @implementation PlacesPlugin {
-    GMSPlacesClient *_placesClient;
+    GMSPlacesClient *placesClient;
     GMSAutocompleteSessionToken *token;
 }
 
 - (void)pluginInitialize {
-    NSString *apiKey = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"GoogleServicesPlacesKey"];
+    NSString *apiKey = [self.commandDelegate.settings objectForKey:[@"PLACES_IOS_API_KEY" lowercaseString]];
     [GMSPlacesClient provideAPIKey:apiKey];
-    _placesClient = [GMSPlacesClient sharedClient];
+    placesClient = [GMSPlacesClient sharedClient];
+    token = [[GMSAutocompleteSessionToken alloc] init];
 }
 
 - (void)getPredictions:(CDVInvokedUrlCommand *)command {
@@ -28,7 +29,7 @@
       filter.country = options[@"country"];
     }
 	
-    [_placesClient findAutocompletePredictionsFromQuery:query bounds:nil boundsMode:kGMSAutocompleteBoundsModeBias
+    [placesClient findAutocompletePredictionsFromQuery:query bounds:nil boundsMode:kGMSAutocompleteBoundsModeBias
     filter:filter sessionToken:token callback:^(NSArray<GMSAutocompletePrediction *> * _Nullable results, NSError * _Nullable error) {
       CDVPluginResult *pluginResult;
       if (error != nil) {
@@ -51,7 +52,7 @@
 
     GMSPlaceField *fields = (GMSPlaceFieldName | GMSPlaceFieldPlaceID | GMSPlaceFieldCoordinate | GMSPlaceFieldFormattedAddress);
 
-    [_placesClient fetchPlaceFromPlaceID:placeId placeFields:fields sessionToken:nil callback:^(GMSPlace *place, NSError *error) {
+    [placesClient fetchPlaceFromPlaceID:placeId placeFields:fields sessionToken:nil callback:^(GMSPlace *place, NSError *error) {
         CDVPluginResult *pluginResult;
         if (error != nil) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
@@ -70,7 +71,6 @@
         @"primaryText": prediction.attributedPrimaryText.string,
         @"secondaryText": prediction.attributedSecondaryText.string,
         @"placeId": prediction.placeID,
-        @"types": prediction.types
     };
 }
 
@@ -79,9 +79,6 @@
         @"placeId": place.placeID,
         @"name": place.name ? place.name : @"",
         @"formattedAddress": place.formattedAddress ? place.formattedAddress : @"",
-//        @"types": place.types ? place.types : @"",
-//        @"website": place.website ? place.website.absoluteString : @"",
-//        @"phoneNumber": place.phoneNumber ? place.phoneNumber : @"",
         @"latlng": @[
             [NSNumber numberWithDouble:place.coordinate.latitude],
             [NSNumber numberWithDouble:place.coordinate.longitude]
