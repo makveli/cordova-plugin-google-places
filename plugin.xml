@@ -43,7 +43,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.INTERNET" />
         </config-file>
-        
+          <dependency id="cordova-support-android-plugin" version="1.0.2"/>
         <framework src="com.google.android.libraries.places:places:+" />
 
         <source-file src="src/android/PlacesPlugin.java"
