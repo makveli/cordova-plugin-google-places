@@ -11,7 +11,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <issue>https://github.com/chemerisuk/cordova-plugin-google-places/issues</issue>
 
     <js-module src="www/PlacesPlugin.js" name="GooglePlaces">
-        <merges target="cordova.plugins.google.places" />
+      
     </js-module>
 
     <platform name="ios">
