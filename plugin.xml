@@ -14,12 +14,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <merges target="cordova.plugins.google.places" />
     </js-module>
 
-    <engines>
-        <engine name="cordova" version=">=7.1.0"/>
-        <engine name="cordova-android" version=">=7.0.0"/>
-        <engine name="cordova-ios" version=">=4.3.0"/>
-    </engines>
-
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="GooglePlaces">
