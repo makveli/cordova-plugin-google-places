@@ -1,0 +1,10 @@
+android {
+    defaultConfig {
+        multiDexEnabled true
+    }
+}
+
+dependencies {
+  implementation 'com.android.support:multidex:1.0.3'
+  implementation 'com.google.android.libraries.places:places-compat:1.1.0'
+}
